@@ -6,6 +6,7 @@ class Cliente:
         self.nome = nome
         self.email = email
         self.password = password
+        self.carrinho_compras = {}
         Cliente._contador_global += 1
 
     def obter_id(self): 
