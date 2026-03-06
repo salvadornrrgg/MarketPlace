@@ -1,3 +1,13 @@
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    # Este ficheiro é o ponto de arranque do cliente , é onde o programa arranca e é onde se monta a zona para o user escrever os comandos no terminal
+# -----------------------------
+
+
+
+
 from sys import argv
 import sys
 from  shared.socket_utilities import PontoAcesso
@@ -11,7 +21,7 @@ def main():
 
     try: 
         # valida endereco_ip e porto (se erro ExcepcaoIPInvalido ou ExcepcaoPortoInvalido)
-        ponto_acesso = PontoAcesso(endereco_ip = 'localhost', porto = argv[1])
+        ponto_acesso = PontoAcesso(endereco_ip = 'localhost', porto = int(argv[1]))
         print("CLIENTE> Configuracao do servidor válida. ")
         print("CLIENTE> Iniciando aplicação do lado do cliente. ")
     except ExcepcaoConfiguracaoInvalida  as e: 

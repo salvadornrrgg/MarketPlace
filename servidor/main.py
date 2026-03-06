@@ -1,3 +1,13 @@
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    #Neste ficheiro é onde se arranca o servidor, ele fica `espera` que os clientes cheguem com os pedidos
+# -----------------------------
+
+
+
+
 import sys
 from servidor.processador import Processador
 from servidor.rede import TCPSocketServidor
@@ -12,7 +22,7 @@ def main():
 
     processador = Processador()
     try:
-        ponto_acesso = PontoAcesso(endereco_ip='localhost', porto = sys.argv[1])  
+        ponto_acesso = PontoAcesso(endereco_ip='localhost', porto = int(sys.argv[1]))  
         print("SERVIDOR> Configuracao do servidor válida. ")
 
     except ExcepcaoConfiguracaoInvalida as e:

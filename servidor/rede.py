@@ -1,3 +1,11 @@
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    #Neste ficheiro recebe se o pedido do cliente e lê se o texto, ele entrega o pedido ao processador.py, ele pega na resposta final do processador e devolve pela rede ao cliente
+# -----------------------------
+
+
 import socket
 from shared.socket_utilities import PontoAcesso
 from servidor.processador import Processador

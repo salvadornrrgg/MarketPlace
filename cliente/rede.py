@@ -1,3 +1,11 @@
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    # Este ficheiro é a camada de transporte do cliente como se fosse um estafeta, aqui é onde se leva a mensagem de texto do cliente pela rede até ao servidor e trás a resposta de volta
+
+
+
 import socket
 from shared.socket_utilities import PontoAcesso
 

@@ -1,9 +1,32 @@
-from shared.utilities import normalizar_nome
-from servidor.excepcoes import ExcepcaoSupermercadoCategoriaJaExistente
-from servidor.categoria import Categoria
-#adicionamos excecao ja criada no excecoes.py
-from servidor.excepcoes import ExcepcaoSupermercado
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    #Este ficheiro é o "cérebro" da loja, é onde se aplicam as regras do negócio, onde são guardados, agora nesta fase, os dados em memoria em varios dicionarios, aqui é onde implementamos as funçoes que efetuam as condiçoes dos comandos escritos nas tabelas do enuciado
+# -----------------------------
 
+
+from shared.utilities import normalizar_nome
+#adicionamos excecao criadaS no excecoes.py
+from servidor.excepcoes import (
+    ExcepcaoSupermercadoCategoriaJaExistente,
+    ExcepcaoCategoriaNaoExiste,
+    ExcepcaoCategoriaComProdutos,
+    ExcepcaoCategoriaNaoExiste,
+    ExcepcaoPrecoInvalido,
+    ExcepcaoQuantidadeInvalida,
+    ExcepcaoProdutoJaExistente,
+    ExcepcaoProdutoNaoExistente,
+    ExcepcaoQuantidadeAdicionarInvalida,
+    ExcepcaoEmailJaExistente,
+    ExcepcaoClienteNaoExiste,
+    ExcepcaoQuantidadeCarrinhoInvalida,
+    ExcepcaoStockInsuficiente,
+    ExcepcaoProdutoNaoNoCarrinho,
+    ExcepcaoCarrinhoVazio,
+)
+#Adicionamos 
+from servidor.categoria import Categoria
 from servidor.produto import Produto
 from servidor.cliente import Cliente
 from servidor.encomenda import Encomenda
@@ -55,9 +78,9 @@ class Loja:
         nome = normalizar_nome(nome)
         idcategoria = self.obter_id_categoria(nome)
         if idcategoria is None:
-            raise ExcepcaoSupermercado(f"A categoria {nome} não existe.")
+            raise ExcepcaoCategoriaNaoExiste(nome)
         if self.verifica_categoria_produtos_em_stock(nome):
-            raise ExcepcaoSupermercado(f"A categoria {nome} é impossivel remover pois contém produtos associados.")
+            raise ExcepcaoCategoriaComProdutos(nome)
         
         del self._categorias[idcategoria]
         return nome
@@ -88,13 +111,13 @@ class Loja:
         preco = round(preco, 2)
 
         if preco <= 0:
-            raise ExcepcaoSupermercado(f"O preço deve ser um valor numérico positivo.")
+            raise ExcepcaoPrecoInvalido()
         if quantidade < 0:
-            raise ExcepcaoSupermercado(f"A quantidade deve ser um número inteiro maior ou igual a zero")
+            raise ExcepcaoQuantidadeInvalida()
         if self.obter_id_categoria(nome_categoria) is None:
-            raise ExcepcaoSupermercado(f"A categoria {nome_categoria} não existe.")
+            raise ExcepcaoCategoriaNaoExiste(nome_categoria)
         if self.obter_id_produto(nome_produto) is not None:
-            raise ExcepcaoSupermercado(f"O produto {nome_produto} já existe.")
+            raise ExcepcaoProdutoJaExistente(nome_produto)
         
         produto = Produto(nome_produto, nome_categoria, preco, quantidade)
         self._produtos[produto.id] = produto
@@ -121,10 +144,9 @@ class Loja:
         id_produto = self.obter_id_produto(nome_produto)
 
         if id_produto is None:
-            raise ExcepcaoSupermercado(f"O produto {nome_produto} não existe.")
-
+            raise ExcepcaoProdutoNaoExistente(nome_produto)
         if add_quantidade <= 0:
-            raise ExcepcaoSupermercado(f"{add_quantidade} deve ser um número inteiro positivo.")
+            raise ExcepcaoQuantidadeAdicionarInvalida(add_quantidade)
 
         produto = self._produtos[id_produto]
         produto.quantidade += add_quantidade
@@ -140,10 +162,10 @@ class Loja:
         id_produto = self.obter_id_produto(nome_produto)
 
         if id_produto is None:
-            raise ExcepcaoSupermercado(f"O produto {nome_produto} não existe.")
+            raise ExcepcaoProdutoNaoExistente(nome_produto)
 
         if novo_preco <= 0:
-            raise ExcepcaoSupermercado(f"O preço deve ser um valor numérico positivo.")
+            raise ExcepcaoPrecoInvalido()
 
         produto = self._produtos[id_produto]
         produto.preco = novo_preco
@@ -169,7 +191,7 @@ class Loja:
 
         for cliente in self._clientes.values():
             if cliente.email.lower() == email:
-                raise ExcepcaoSupermercado(f"Já existe um cliente registado com o email {email}.")
+                raise ExcepcaoEmailJaExistente(email)
 
         cliente = Cliente(nome_cliente, email, password)
         self._clientes[cliente.id] = cliente
@@ -190,19 +212,19 @@ class Loja:
         nome_produto = normalizar_nome(nome_produto)
 
         if id_cliente  not in self._clientes:
-            raise ExcepcaoSupermercado (f"O Cliente com id {id_cliente} não está registado no sistema")
+            raise ExcepcaoClienteNaoExiste(id_cliente)
         cliente = self._clientes[id_cliente]
 
         id_produto = self.obter_id_produto(nome_produto)
         if id_produto is None:
-            raise ExcepcaoSupermercado(f"O Produto {nome_produto} não existe.")
+            raise ExcepcaoProdutoNaoExistente(nome_produto)
         produto = self._produtos[id_produto]
 
         if quantidade <= 0:
-            raise ExcepcaoSupermercado ("A quantidade a adicionar ao carrinho de compras deve ser um numero inteiro maior que zero.")
+            raise ExcepcaoQuantidadeCarrinhoInvalida()
 
         if quantidade > produto.quantidade:
-            raise ExcepcaoSupermercado ("A quantidade solicitada não pode ser superior à quantidade disponível em stock.")
+            raise ExcepcaoStockInsuficiente()
 
         produto.quantidade -= quantidade
 
@@ -219,16 +241,16 @@ class Loja:
         nome_produto = normalizar_nome(nome_produto)
 
         if id_cliente  not in self._clientes:
-            raise ExcepcaoSupermercado (f"O Cliente com id {id_cliente} não está registado no sistema")
+            raise ExcepcaoClienteNaoExiste (f"O Cliente com id {id_cliente} não está registado no sistema")
         cliente = self._clientes[id_cliente]
 
         id_produto = self.obter_id_produto(nome_produto)
         if id_produto is None:
-            raise ExcepcaoSupermercado(f"O Produto {nome_produto} não existe.")
+            raise ExcepcaoProdutoNaoExistente(f"O Produto {nome_produto} não existe.")
         produto = self._produtos[id_produto]
 
         if id_produto not in cliente.carrinho_compras:
-            raise ExcepcaoSupermercado("Produto não está no carrinho de compras.")
+            raise ExcepcaoProdutoNaoNoCarrinho("Produto não está no carrinho de compras.")
         
         quantidade_reposta = cliente.carrinho_compras[id_produto]
         produto.quantidade += quantidade_reposta
@@ -236,26 +258,27 @@ class Loja:
 
         return produto
     
+    #obter todos os produtos do carrinho
     def obter_todos_produtos_carrinho(self, id_cliente):
         id_cliente = int(id_cliente)
 
         if id_cliente  not in self._clientes:
-            raise ExcepcaoSupermercado (f"O Cliente com id {id_cliente} não está registado no sistema")
+            raise ExcepcaoClienteNaoExiste(id_cliente)
         cliente = self._clientes[id_cliente]
 
         return cliente.carrinho_compras
 
-
+    #fazer checkout do carrinho de compras
     def fazer_checkout_carrinho(self, id_cliente):
         id_cliente = int(id_cliente)
 
         if id_cliente  not in self._clientes:
-            raise ExcepcaoSupermercado (f"O Cliente com id {id_cliente} não está registado no sistema")
+            raise ExcepcaoClienteNaoExiste(id_cliente)
         cliente = self._clientes[id_cliente]
 
         produtos_carrinho = len(cliente.carrinho_compras)
         if produtos_carrinho < 1:
-            raise ExcepcaoSupermercado("Carrinho Vazio")
+            raise ExcepcaoCarrinhoVazio()
         
         total_valor_encomenda = 0.00
         for id_produto, quantidade in cliente.carrinho_compras.items():
@@ -284,7 +307,7 @@ class Loja:
         id_cliente = int(id_cliente)
 
         if id_cliente  not in self._clientes:
-            raise ExcepcaoSupermercado (f"O Cliente com id {id_cliente} não está registado no sistema")
+            raise ExcepcaoClienteNaoExiste(id_cliente)
         cliente = self._clientes[id_cliente]
 
         encomendas_cliente = []

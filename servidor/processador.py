@@ -1,3 +1,12 @@
+# -----------------------------
+    #GRUPO 09    
+    #Salvado Gonçalves   64162
+    # Tomás Farinha      64253
+    # Este ficheiro é o tradutor/ponte entre a rede e a loja, ele recebe o comando verifica se o comando está correto e chma a loja.py para fazer o "trabalho duro", ele controi tbm a string de resposta (OK/NOK) e devolve a string para a rede
+# -----------------------------
+
+
+
 from servidor.excepcoes import ExcepcaoComandoInvalido
 from servidor.excepcoes import ExcepcaoComandoDesconhecido
 from servidor.excepcoes import ExcepcaoComandoNumeroArgumentosIncorreto
@@ -149,7 +158,7 @@ class Processador:
         total_quantidade = self.loja.obter_total_quantidade()
 
         if len(produtos) == 0:
-            return f"Sem Produtos"
+            return f"Sem Produtos."
         
         total_produtos = len(produtos)
 
@@ -161,7 +170,6 @@ class Processador:
             resposta += f"{produto.id} - {produto.nome} ({produto.categoria}, {produto.preco:.2f} euros, {produto.quantidade} unidades);\n"
         
         return resposta.strip()
-
 
     #aumenta stock
     def _cmd_aumenta_stock_produto(self, args):
@@ -176,7 +184,6 @@ class Processador:
         produto = self.loja.aumentar_stock_produto(nome_produto, add_quantidade)
 
         return f"Stock do produto {produto.nome} aumentado em {add_quantidade} unidades com sucesso."
-
 
     #atualiza preco
     def _cmd_atualiza_preco_produto(self, args):
@@ -387,8 +394,6 @@ class Processador:
         resposta += f"Categoria Top: {categoria_top_frase}\n\n"
 
         resposta += resposta_total_encomendas
-        
-
        
         return resposta.strip()
 
